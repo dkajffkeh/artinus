@@ -1,16 +1,26 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.2.9-SNAPSHOT'
-    id 'io.spring.dependency-management' version '1.1.6'
+    id 'org.springframework.boot' version '2.7.13-SNAPSHOT'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
 
 group = 'com.artinus'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
+}
+
+jar {
+    enabled = false
+}
+
+ext {
+    queryDslVersion = '5.0.0'
+    springCloudVersion = '2021.0.3'
+    bootAdminVersion = '2.7.12'
 }
 
 repositories {
@@ -19,12 +29,24 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     runtimeOnly 'com.h2database:h2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // QueryDsl
+    implementation("com.querydsl:querydsl-jpa:${queryDslVersion}")
+    annotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
+    annotationProcessor("jakarta.persistence:jakarta.persistence-api")
+    annotationProcessor("jakarta.annotation:jakarta.annotation-api")
+
+
 }
 
 tasks.named('test') {
