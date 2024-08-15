@@ -1,5 +1,6 @@
 package com.artinus.userapp.domain.entity.user;
 
+import com.artinus.userapp.domain.entity.base.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,7 +10,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "WEB_USER")
-public class WebUser {
+public class WebUser extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
