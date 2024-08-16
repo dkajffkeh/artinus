@@ -1,6 +1,6 @@
 package com.artinus.userapp.domain.entity.subscription;
 
-import com.artinus.userapp.domain.constant.SubscriptionStatus;
+import com.artinus.userapp.constant.SubscriptionStatus;
 import com.artinus.userapp.domain.entity.base.BaseEntity;
 import com.artinus.userapp.domain.entity.channel.Channel;
 import com.artinus.userapp.domain.entity.user.WebUser;

@@ -1,6 +1,6 @@
 package com.artinus.userapp.domain.entity.channel;
 
-import com.artinus.userapp.domain.constant.ChannelType;
+import com.artinus.userapp.constant.ChannelType;
 import com.artinus.userapp.domain.entity.base.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;

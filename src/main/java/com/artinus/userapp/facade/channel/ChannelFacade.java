@@ -1,4 +1,4 @@
-package com.artinus.facade.channel;
+package com.artinus.userapp.facade.channel;
 
 import com.artinus.userapp.repository.channel.ChannelRepository;
 import org.springframework.stereotype.Service;

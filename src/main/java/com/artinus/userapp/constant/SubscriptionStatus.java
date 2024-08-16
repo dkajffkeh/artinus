@@ -1,4 +1,4 @@
-package com.artinus.userapp.domain.constant;
+package com.artinus.userapp.constant;
 
 public enum SubscriptionStatus {
 

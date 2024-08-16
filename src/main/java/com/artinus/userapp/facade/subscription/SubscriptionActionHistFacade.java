@@ -1,4 +1,4 @@
-package com.artinus.facade.subscription;
+package com.artinus.userapp.facade.subscription;
 
 import org.springframework.stereotype.Service;
 

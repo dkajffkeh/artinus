@@ -1,4 +1,4 @@
-package com.artinus.facade.subscription;
+package com.artinus.userapp.facade.subscription;
 
 import com.artinus.userapp.domain.entity.subscription.SubscriptionMst;
 import com.artinus.userapp.repository.subscription.SubscriptionMstRepository;

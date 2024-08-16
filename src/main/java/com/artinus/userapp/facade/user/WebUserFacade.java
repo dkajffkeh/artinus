@@ -1,4 +1,4 @@
-package com.artinus.facade.user;
+package com.artinus.userapp.facade.user;
 
 import com.artinus.userapp.repository.user.WebUserRepository;
 import org.springframework.stereotype.Service;
