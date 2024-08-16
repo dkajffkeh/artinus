@@ -50,6 +50,8 @@ public class SubscriptionActionHist extends BaseEntity {
     @Column(name = "SUBSCRIPTION_ACTION_DATE")
     private String subscriptionActionDate;
 
+
+
     public SubscriptionActionHist() {
 
     }
