@@ -23,7 +23,7 @@ public class Channel extends BaseEntity {
     @Column(name = "CHANNEL_NAME", length = 30, nullable = false)
     private String channelName;
 
-    @Column(name = "CHANNEL_CODE", length = 15, nullable = false)
+    @Column(name = "CHANNEL_CODE", length = 15, nullable = false, unique = true)
     private String channelCode;
 
     @Column(name = "CHANNEL_TYPE", length = 20, nullable = false)
@@ -32,6 +32,11 @@ public class Channel extends BaseEntity {
 
     public Channel() {
 
+    }
+
+    public Channel(String channelName, String channelCode,
+            ChannelType channelType) {
+        this(null, channelName, channelCode, channelType);
     }
 
     public Channel(Long id, String channelName, String channelCode,

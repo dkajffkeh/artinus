@@ -1,5 +1,6 @@
 package com.artinus.userapp.facade.user;
 
+import com.artinus.userapp.domain.entity.user.WebUser;
 import com.artinus.userapp.repository.user.WebUserRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,5 +14,8 @@ public class WebUserFacade {
 
     private final WebUserRepository webUserRepository;
 
+    public WebUser save(WebUser webUser) {
+        return webUserRepository.save(webUser);
+    }
 
 }

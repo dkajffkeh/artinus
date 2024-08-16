@@ -6,6 +6,10 @@
 
 Database : `H2 - MySQL Mode`
 
+DB 구조: [`ERD`](/docs/requirements/DB설계.md)
+
+요구사항 분석: [`요구사항 분석`](/docs/requirements/요구사항분석.md)
+
 ### Test 전화번호
 - `phoneNumber` : "01012341234"
 

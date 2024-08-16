@@ -36,6 +36,9 @@ public class SubscriptionMst extends BaseEntity {
     @JoinColumn(name = "CHANNEL_ID", nullable = false)
     private Channel channel;
 
+    @Column(name = "SUBSCRIPTION_ACTION_DATE")
+    private String subscriptionActionDate;
+
     @Column(name = "SUBSCRIPTION_STATUS", nullable = false)
     @Enumerated(EnumType.STRING)
     private SubscriptionStatus subscriptionStatus;
