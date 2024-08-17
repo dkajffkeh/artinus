@@ -2,7 +2,9 @@ package com.artinus.userapp.api.subscription;
 
 import com.artinus.userapp.payload.ApiResult;
 import com.artinus.userapp.payload.request.SubscribeRequest;
+import com.artinus.userapp.payload.request.UnSubscribeRequest;
 import com.artinus.userapp.service.subscription.SubscriptionHandler;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +22,15 @@ public class SubscriptionController {
     }
 
     @PostMapping
-    public ApiResult<?> subscribe(@RequestBody SubscribeRequest request) {
+    public ApiResult<Void> subscribe(@RequestBody SubscribeRequest request) {
         subscribeHandler.subscribe(request);
         return ApiResult.succeed();
     }
+
+    @PatchMapping
+    public ApiResult<Void> unSubscribe(@RequestBody UnSubscribeRequest request) {
+        subscribeHandler.unsubscribe(request);
+        return ApiResult.succeed();
+    }
+
 }

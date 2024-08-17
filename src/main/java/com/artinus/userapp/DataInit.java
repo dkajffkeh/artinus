@@ -34,7 +34,6 @@ public class DataInit {
     }
 
 
-
     @Transactional
     @PostConstruct
     public void initData() {
@@ -43,9 +42,9 @@ public class DataInit {
         WebUser webUser2 = webUserFacade.save(new WebUser("01012341235"));
 
         // 채널 생성
-        Channel channel1 = channelFacade.save(new Channel("워크", "WERK", BOTH));
-        Channel channel2 = channelFacade.save(new Channel("아임웹", "IMWEB", SUBSCRIPTION_ONLY));
-        Channel channel3 = channelFacade.save(new Channel("스팀", "STEAM", CANCELLATION_ONLY));
+        Channel channel1 = channelFacade.save(new Channel("워크", BOTH));
+        Channel channel2 = channelFacade.save(new Channel("아임웹", SUBSCRIPTION_ONLY));
+        Channel channel3 = channelFacade.save(new Channel("스팀", CANCELLATION_ONLY));
 
     }
 

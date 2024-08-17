@@ -17,13 +17,11 @@
 |----------------|------------|----------|----------------------|
 | ID             | NUMBER     | NO       | 식별자 아이디        |
 | CHANNEL_NAME   | VARCHAR(30)| NO       | 채널명               |
-| CHANNEL_CODE   | VARCHAR(30)| NO       | 채널 코드            |
 | CHANNEL_TYPE   | VARCHAR(20)| NO       | 채널 타입            |
 | CREATED_AT     | DATE       | NO       | 생성일               |
 | MODIFIED_AT    | DATE       | YES      | 수정일               |
 
 CHANNEL_NAME: 캐비지, 당근마켓 알바. 케어위드 ... <br>
-CHANNEL_CODE: 고유 채널 코드 ex) CARROT, CABBAGE ...  <br>
 CHANNEL_TYPE: BOTH(구독, 해지 둘가 가능), SUBSCRIPTION_ONLY(구독 만 가능), CANCELLATION_ONLY(해지만 가능) <br>
 
 ---

@@ -1,8 +1,11 @@
 package com.artinus.userapp.domain.entity.user;
 
 import static com.artinus.userapp.constant.SubscriptionStatus.NOT_SUBSCRIBED;
-import static com.artinus.userapp.exception.code.ArtinusErrorCode.CANCEL_ONLY_CHANNEL;
+import static com.artinus.userapp.exception.code.ArtinusErrorCode.CANCEL_ONLY;
 import static com.artinus.userapp.exception.code.ArtinusErrorCode.NOT_UPPER_SUBSCRIBE_REQUEST;
+import static com.artinus.userapp.exception.code.ArtinusErrorCode.SUBSCRIBE_ONLY;
+import static com.artinus.userapp.exception.code.ArtinusErrorCode.SUBSCRIPTION_NOT_FOUND;
+import static com.artinus.userapp.exception.code.ArtinusErrorCode.UPPER_SUBSCRIBE_REQUEST;
 import static com.artinus.userapp.global.utils.DateTimeUtils.toyyyyMMdd;
 import static javax.persistence.CascadeType.ALL;
 
@@ -13,10 +16,20 @@ import com.artinus.userapp.domain.entity.subscription.SubscriptionActionHist;
 import com.artinus.userapp.domain.entity.subscription.SubscriptionMst;
 import com.artinus.userapp.exception.ArtinusException;
 import com.artinus.userapp.payload.request.SubscribeRequest;
+import com.artinus.userapp.payload.request.UnSubscribeRequest;
+import com.artinus.userapp.payload.response.SubscriptionAction;
+import com.artinus.userapp.payload.response.SubscriptionHistResponse;
+import com.artinus.userapp.payload.response.SubscriptionHistResponse.ChannelHist;
+import com.artinus.userapp.payload.response.SubscriptionHistResponse.SingleChannelHist;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -65,12 +78,44 @@ public class WebUser extends BaseEntity {
         this.phoneNumber = phoneNumber;
     }
 
+    public void unSubscribe(Channel channel,
+            SubscriptionMst subscriptionMst,
+            UnSubscribeRequest request) {
+        if(channel.isSubscribeOnly()) {
+            throw new ArtinusException(SUBSCRIBE_ONLY);
+        }
+
+        if(isFirstSubscribe(subscriptionMst)) {
+            throw new ArtinusException(SUBSCRIPTION_NOT_FOUND);
+        }
+
+        if(!subscriptionMst.isDownLevelReq(request.getSubscriptionStatus())) {
+            throw new ArtinusException(UPPER_SUBSCRIBE_REQUEST);
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+
+        SubscriptionStatus previousStatus = subscriptionMst.getSubscriptionStatus();
+        String prevActionDate = subscriptionMst.getSubscriptionActionDate();
+        subscriptionMst.renewSubscription(request.getSubscriptionStatus());
+
+        this.actionHists.add(
+                new SubscriptionActionHist(this,
+                        channel,
+                        prevActionDate,
+                        toyyyyMMdd(now),
+                        previousStatus,
+                        request.getSubscriptionStatus(),
+                        toyyyyMMdd(now)));
+
+    }
+
     public void subscribe(Channel channel,
             SubscriptionMst subscriptionMst,
             SubscribeRequest request) {
 
         // first action
-        if(isFirstAction(subscriptionMst)) {
+        if(isFirstSubscribe(subscriptionMst)) {
             subscribeFirst(channel, request);
             return;
         }
@@ -87,7 +132,7 @@ public class WebUser extends BaseEntity {
         LocalDateTime now = LocalDateTime.now();
 
         if(channel.isCancelOnly()) {
-            throw new ArtinusException(CANCEL_ONLY_CHANNEL);
+            throw new ArtinusException(CANCEL_ONLY);
         }
 
         // 상위 레벨로의 구독 요청이 아닌경우
@@ -95,25 +140,25 @@ public class WebUser extends BaseEntity {
             throw new ArtinusException(NOT_UPPER_SUBSCRIBE_REQUEST);
         }
 
+        SubscriptionStatus previousStatus = subscriptionMst.getSubscriptionStatus();
 
+        subscriptionMst.renewSubscription(request.getSubscriptionStatus());
 
         this.actionHists.add(
                 new SubscriptionActionHist(this,
                         channel,
                         toyyyyMMdd(now),
                         null,
-                        subscriptionMst.getSubscriptionStatus(),
+                        previousStatus,
                         request.getSubscriptionStatus(),
                         toyyyyMMdd(now)));
-
-
     }
 
     // 최초 구독 정보 생성
     private void subscribeFirst(Channel channel, SubscribeRequest request) {
         // Cancel Only 타입으로 들어온 경우 다른 구독신청을 할 수 없다.
         if(request.getSubscriptionStatus() != NOT_SUBSCRIBED && channel.isCancelOnly()) {
-            throw new ArtinusException(CANCEL_ONLY_CHANNEL);
+            throw new ArtinusException(CANCEL_ONLY);
         }
 
         SubscriptionMst subscriptionMst = new SubscriptionMst(this, channel, toyyyyMMdd(
@@ -134,7 +179,7 @@ public class WebUser extends BaseEntity {
                             channel,
                             null,
                             toyyyyMMdd(now),
-                            null,
+                            NOT_SUBSCRIBED,
                             subscriptionStatus,
                             toyyyyMMdd(now)));
             return;
@@ -146,14 +191,49 @@ public class WebUser extends BaseEntity {
                         channel,
                         toyyyyMMdd(now),
                         null,
-                        null,
+                        NOT_SUBSCRIBED,
                         subscriptionStatus,
                         toyyyyMMdd(now)));
 
     }
 
-    private boolean isFirstAction(SubscriptionMst subscriptionMst) {
+    private boolean isFirstSubscribe(SubscriptionMst subscriptionMst) {
         return ObjectUtils.isEmpty(subscriptionMst);
+    }
+
+    public SubscriptionHistResponse histResponse() {
+        Map<String, List<SubscriptionActionHist>> groupByActionDate = this.actionHists.stream()
+                .collect(Collectors.groupingBy(SubscriptionActionHist::getSubscriptionActionDate));
+
+        final List<ChannelHist> hists = new ArrayList<>();
+
+        groupByActionDate.forEach((k, v) -> {
+
+            Map<Channel, List<SubscriptionActionHist>> groupByChannel = v.stream()
+                    .collect(Collectors.groupingBy(SubscriptionActionHist::getChannel));
+
+            List<SingleChannelHist> channelHists = new ArrayList<>();
+            // single Channel build
+            groupByChannel.forEach((inK, inV) -> {
+
+                List<SubscriptionAction> actions = inV.stream()
+                        .map(SubscriptionActionHist::buildDtoAction)
+                        .sorted(Comparator.comparing(SubscriptionAction::getActionDateTime).reversed())
+                        .toList();
+
+                channelHists.add(
+                        new SingleChannelHist(
+                                inK.getChannelName(),
+                                inK.getId(),
+                                actions
+                        ));
+            });
+
+            hists.add(new ChannelHist(k, channelHists));
+
+        });
+
+        return new SubscriptionHistResponse(hists);
     }
 
     @Override

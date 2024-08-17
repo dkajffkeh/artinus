@@ -16,11 +16,11 @@ public class BaseEntity {
 
     @CreatedDate
     @Column(name = "CREATED_AT", updatable = false, columnDefinition = "datetime")
-    private LocalDateTime createdAt = now();
+    protected LocalDateTime createdAt = now();
 
     @LastModifiedDate
     @Column(name = "MODIFIED_AT", columnDefinition = "datetime")
-    private LocalDateTime modifiedAt = now();
+    protected LocalDateTime modifiedAt = now();
 
     public BaseEntity() {
 

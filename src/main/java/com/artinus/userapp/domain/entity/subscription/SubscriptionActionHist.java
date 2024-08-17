@@ -4,6 +4,7 @@ import com.artinus.userapp.constant.SubscriptionStatus;
 import com.artinus.userapp.domain.entity.base.BaseEntity;
 import com.artinus.userapp.domain.entity.channel.Channel;
 import com.artinus.userapp.domain.entity.user.WebUser;
+import com.artinus.userapp.payload.response.SubscriptionAction;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -77,5 +78,21 @@ public class SubscriptionActionHist extends BaseEntity {
         this.subscriptionActionDate = subscriptionActionDate;
     }
 
+    public Channel getChannel() {
+        return channel;
+    }
 
+    public String getSubscriptionActionDate() {
+        return subscriptionActionDate;
+    }
+
+    public SubscriptionAction buildDtoAction() {
+        return new SubscriptionAction(
+                this.subscriptionStart,
+                this.subscriptionEnd,
+                this.prevSubscriptionStatus,
+                this.nextSubscriptionStatus,
+                super.createdAt
+        );
+    }
 }

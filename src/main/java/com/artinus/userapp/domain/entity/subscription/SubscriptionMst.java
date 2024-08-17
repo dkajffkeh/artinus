@@ -73,8 +73,16 @@ public class SubscriptionMst extends BaseEntity {
         return this.subscriptionStatus.getSubscriptionLevel() < status.getSubscriptionLevel();
     }
 
+    public boolean isDownLevelReq(SubscriptionStatus status) {
+        return this.subscriptionStatus.getSubscriptionLevel() > status.getSubscriptionLevel();
+    }
+
     public SubscriptionStatus getSubscriptionStatus() {
         return subscriptionStatus;
+    }
+
+    public String getSubscriptionActionDate() {
+        return subscriptionActionDate;
     }
 
     public void renewSubscription(SubscriptionStatus subscriptionStatus) {

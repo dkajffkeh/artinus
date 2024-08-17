@@ -11,7 +11,7 @@ class WebUserFacadeTest {
 
     private final NullReturnWebUserRepositoryStub repositoryStub = new NullReturnWebUserRepositoryStub();
 
-    private final WebUserFacade webUserFacade = new WebUserFacade(repositoryStub);
+    private final WebUserFacade webUserFacade = new WebUserFacade(repositoryStub, null);
 
     @Test
     @DisplayName("사용자를 찾지 못했을 경우 USER NOT FOUND Exception 을 발생 한다.")

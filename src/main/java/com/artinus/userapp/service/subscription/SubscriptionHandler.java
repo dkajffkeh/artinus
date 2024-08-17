@@ -7,6 +7,7 @@ import com.artinus.userapp.facade.channel.ChannelFacade;
 import com.artinus.userapp.facade.subscription.SubscriptionMstFacade;
 import com.artinus.userapp.facade.user.WebUserFacade;
 import com.artinus.userapp.payload.request.SubscribeRequest;
+import com.artinus.userapp.payload.request.UnSubscribeRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,17 @@ public class SubscriptionHandler {
         SubscriptionMst currentSubscription = subscriptionMstFacade.findByChannelAndUser(webUser, channel);
 
         webUser.subscribe(channel, currentSubscription, request);
+
+        webUserFacade.save(webUser);
+    }
+
+    @Transactional
+    public void unsubscribe(UnSubscribeRequest request) {
+        WebUser webUser = webUserFacade.findByPhoneNumber(request.getPhoneNumber());
+        Channel channel = channelFacade.findById(request.getChannelId());
+        SubscriptionMst currentSubscription = subscriptionMstFacade.findByChannelAndUser(webUser, channel);
+
+        webUser.unSubscribe(channel, currentSubscription, request);
 
         webUserFacade.save(webUser);
     }

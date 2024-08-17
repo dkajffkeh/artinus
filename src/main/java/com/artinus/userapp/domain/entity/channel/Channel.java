@@ -24,9 +24,6 @@ public class Channel extends BaseEntity {
     @Column(name = "CHANNEL_NAME", length = 30, nullable = false)
     private String channelName;
 
-    @Column(name = "CHANNEL_CODE", length = 15, nullable = false, unique = true)
-    private String channelCode;
-
     @Column(name = "CHANNEL_TYPE", length = 20, nullable = false)
     @Enumerated(EnumType.STRING)
     private ChannelType channelType;
@@ -35,23 +32,37 @@ public class Channel extends BaseEntity {
 
     }
 
-    public Channel(String channelName, String channelCode,
-            ChannelType channelType) {
-        this(null, channelName, channelCode, channelType);
+    public Channel(String channelName, ChannelType channelType) {
+        this(null, channelName, channelType);
     }
 
 
 
-    public Channel(Long id, String channelName, String channelCode,
+    public Channel(Long id, String channelName,
             ChannelType channelType) {
         this.id = id;
         this.channelName = channelName;
-        this.channelCode = channelCode;
         this.channelType = channelType;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getChannelName() {
+        return channelName;
+    }
+
+    public ChannelType getChannelType() {
+        return channelType;
     }
 
     public boolean isCancelOnly() {
         return this.channelType == ChannelType.CANCELLATION_ONLY;
+    }
+
+    public boolean isSubscribeOnly() {
+        return this.channelType == ChannelType.SUBSCRIPTION_ONLY;
     }
 
     @Override
