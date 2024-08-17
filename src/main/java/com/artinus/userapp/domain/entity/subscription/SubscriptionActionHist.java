@@ -69,4 +69,6 @@ public class SubscriptionActionHist extends BaseEntity {
         this.nextSubscriptionStatus = nextSubscriptionStatus;
         this.subscriptionActionDate = subscriptionActionDate;
     }
+
+
 }

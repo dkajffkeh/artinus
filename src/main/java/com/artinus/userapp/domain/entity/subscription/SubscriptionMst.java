@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.Version;
 
 @Entity
 @Table(name = "SUBSCRIPTION_MST", uniqueConstraints = {
@@ -43,15 +44,29 @@ public class SubscriptionMst extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SubscriptionStatus subscriptionStatus;
 
+    @Version
+    private Long version;
+
     public SubscriptionMst() {
 
     }
 
+    public SubscriptionMst(WebUser webUser, Channel channel, String subscriptionActionDate,
+            SubscriptionStatus subscriptionStatus) {
+        this(null, webUser, channel, subscriptionActionDate, subscriptionStatus);
+    }
+
     public SubscriptionMst(Long id, WebUser webUser,
-            Channel channel, SubscriptionStatus subscriptionStatus) {
+            Channel channel, String subscriptionActionDate,
+            SubscriptionStatus subscriptionStatus) {
         this.id = id;
         this.webUser = webUser;
         this.channel = channel;
+        this.subscriptionActionDate = subscriptionActionDate;
         this.subscriptionStatus = subscriptionStatus;
+    }
+
+    public boolean isSameChannel(Channel channel) {
+        return this.channel.equals(channel);
     }
 }

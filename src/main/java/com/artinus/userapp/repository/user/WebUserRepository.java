@@ -6,4 +6,6 @@ import org.springframework.data.repository.Repository;
 public interface WebUserRepository extends Repository<WebUser, Long> {
 
     WebUser save(WebUser webUser);
+
+    WebUser findFirstByPhoneNumber(String phoneNumber);
 }

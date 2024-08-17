@@ -7,4 +7,6 @@ import org.springframework.data.repository.Repository;
 public interface ChannelRepository extends Repository<Channel, Long> {
 
     Channel save(Channel channel);
+
+    Channel findById(Long id);
 }

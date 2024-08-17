@@ -6,4 +6,5 @@ public enum ChannelType {
     CANCELLATION_ONLY
     ;
 
+
 }

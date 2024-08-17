@@ -2,6 +2,7 @@ package com.artinus.userapp.domain.entity.channel;
 
 import com.artinus.userapp.constant.ChannelType;
 import com.artinus.userapp.domain.entity.base.BaseEntity;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -39,11 +40,34 @@ public class Channel extends BaseEntity {
         this(null, channelName, channelCode, channelType);
     }
 
+
+
     public Channel(Long id, String channelName, String channelCode,
             ChannelType channelType) {
         this.id = id;
         this.channelName = channelName;
         this.channelCode = channelCode;
         this.channelType = channelType;
+    }
+
+    public boolean isCancelOnly() {
+        return this.channelType == ChannelType.CANCELLATION_ONLY;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Channel channel = (Channel) o;
+        return Objects.equals(id, channel.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
