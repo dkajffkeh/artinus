@@ -4,6 +4,7 @@ import com.artinus.userapp.payload.ApiResult;
 import com.artinus.userapp.payload.request.SubscribeRequest;
 import com.artinus.userapp.service.subscription.SubscriptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,7 +20,8 @@ public class SubscriptionController {
     }
 
     @PostMapping
-    public ApiResult<?> subscribe(SubscribeRequest request) {
-        return null;
+    public ApiResult<?> subscribe(@RequestBody SubscribeRequest request) {
+        subscribeHandler.subscribe(request);
+        return ApiResult.succeed();
     }
 }

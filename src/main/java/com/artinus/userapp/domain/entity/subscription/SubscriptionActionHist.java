@@ -56,6 +56,13 @@ public class SubscriptionActionHist extends BaseEntity {
 
     }
 
+    public SubscriptionActionHist(WebUser webUser,
+            Channel channel, String subscriptionStart, String subscriptionEnd,
+            SubscriptionStatus prevSubscriptionStatus,
+            SubscriptionStatus nextSubscriptionStatus, String subscriptionActionDate) {
+        this(null, webUser, channel, subscriptionStart, subscriptionEnd, prevSubscriptionStatus, nextSubscriptionStatus, subscriptionActionDate);
+    }
+
     public SubscriptionActionHist(Long id, WebUser webUser,
             Channel channel, String subscriptionStart, String subscriptionEnd,
             SubscriptionStatus prevSubscriptionStatus,

@@ -2,6 +2,7 @@ package com.artinus.userapp.domain.entity.user;
 
 import static com.artinus.userapp.constant.SubscriptionStatus.NOT_SUBSCRIBED;
 import static com.artinus.userapp.exception.code.ArtinusErrorCode.CANCEL_ONLY_CHANNEL;
+import static com.artinus.userapp.exception.code.ArtinusErrorCode.NOT_UPPER_SUBSCRIBE_REQUEST;
 import static com.artinus.userapp.global.utils.DateTimeUtils.toyyyyMMdd;
 import static javax.persistence.CascadeType.ALL;
 
@@ -11,7 +12,6 @@ import com.artinus.userapp.domain.entity.channel.Channel;
 import com.artinus.userapp.domain.entity.subscription.SubscriptionActionHist;
 import com.artinus.userapp.domain.entity.subscription.SubscriptionMst;
 import com.artinus.userapp.exception.ArtinusException;
-import com.artinus.userapp.exception.code.ArtinusErrorCode;
 import com.artinus.userapp.payload.request.SubscribeRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -75,6 +75,38 @@ public class WebUser extends BaseEntity {
             return;
         }
 
+        // 구독 정보를 upgrade 하는 경우
+        upgradeSubscribeLevel(channel, subscriptionMst, request);
+
+    }
+
+    private void upgradeSubscribeLevel(Channel channel,
+            SubscriptionMst subscriptionMst,
+            SubscribeRequest request) {
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if(channel.isCancelOnly()) {
+            throw new ArtinusException(CANCEL_ONLY_CHANNEL);
+        }
+
+        // 상위 레벨로의 구독 요청이 아닌경우
+        if(!subscriptionMst.isUpperLevelReq(request.getSubscriptionStatus())) {
+            throw new ArtinusException(NOT_UPPER_SUBSCRIBE_REQUEST);
+        }
+
+
+
+        this.actionHists.add(
+                new SubscriptionActionHist(this,
+                        channel,
+                        toyyyyMMdd(now),
+                        null,
+                        subscriptionMst.getSubscriptionStatus(),
+                        request.getSubscriptionStatus(),
+                        toyyyyMMdd(now)));
+
+
     }
 
     // 최초 구독 정보 생성
@@ -89,16 +121,34 @@ public class WebUser extends BaseEntity {
 
         this.subscriptions.add(subscriptionMst);
 
-        buildHist(channel, request.getSubscriptionStatus());
+        buildFirstHist(channel, request.getSubscriptionStatus());
     }
 
-    private void buildHist(Channel channel,
+    private void buildFirstHist(Channel channel,
             SubscriptionStatus subscriptionStatus) {
+        LocalDateTime now = LocalDateTime.now();
         // 구독 안함 hist
         if(subscriptionStatus == NOT_SUBSCRIBED) {
-            this.actionHists.add(new SubscriptionActionHist());
+            this.actionHists.add(
+                    new SubscriptionActionHist(this,
+                            channel,
+                            null,
+                            toyyyyMMdd(now),
+                            null,
+                            subscriptionStatus,
+                            toyyyyMMdd(now)));
+            return;
         }
 
+        // 나머지 구독 이벤트 핸들링
+        this.actionHists.add(
+                new SubscriptionActionHist(this,
+                        channel,
+                        toyyyyMMdd(now),
+                        null,
+                        null,
+                        subscriptionStatus,
+                        toyyyyMMdd(now)));
 
     }
 

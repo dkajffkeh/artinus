@@ -1,9 +1,12 @@
 package com.artinus.userapp.domain.entity.subscription;
 
+import static com.artinus.userapp.global.utils.DateTimeUtils.toyyyyMMdd;
+
 import com.artinus.userapp.constant.SubscriptionStatus;
 import com.artinus.userapp.domain.entity.base.BaseEntity;
 import com.artinus.userapp.domain.entity.channel.Channel;
 import com.artinus.userapp.domain.entity.user.WebUser;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -66,7 +69,16 @@ public class SubscriptionMst extends BaseEntity {
         this.subscriptionStatus = subscriptionStatus;
     }
 
-    public boolean isSameChannel(Channel channel) {
-        return this.channel.equals(channel);
+    public boolean isUpperLevelReq(SubscriptionStatus status) {
+        return this.subscriptionStatus.getSubscriptionLevel() < status.getSubscriptionLevel();
+    }
+
+    public SubscriptionStatus getSubscriptionStatus() {
+        return subscriptionStatus;
+    }
+
+    public void renewSubscription(SubscriptionStatus subscriptionStatus) {
+        this.subscriptionStatus = subscriptionStatus;
+        this.subscriptionActionDate = toyyyyMMdd(LocalDateTime.now());
     }
 }
