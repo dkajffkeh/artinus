@@ -20,7 +20,7 @@ public class SubscriptionHistResponse {
         return hists;
     }
 
-    public static class ChannelHist {
+    public static class ChannelHist implements Comparable<ChannelHist> {
 
         private String date;
 
@@ -42,6 +42,13 @@ public class SubscriptionHistResponse {
 
         public List<SingleChannelHist> getChannelHists() {
             return channelHists;
+        }
+
+
+        @Override
+        public int compareTo(ChannelHist other) {
+            // 날짜를 정수형으로 변환하여 비교 (내림차순)
+            return Integer.compare(Integer.parseInt(other.getDate()), Integer.parseInt(this.date));
         }
     }
 

@@ -11,8 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class SubscriptionHistHandler {
 
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
-
     private final WebUserFacade webUserFacade;
 
     public SubscriptionHistHandler(WebUserFacade webUserFacade) {

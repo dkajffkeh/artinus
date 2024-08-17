@@ -23,12 +23,10 @@ import com.artinus.userapp.payload.response.SubscriptionHistResponse.ChannelHist
 import com.artinus.userapp.payload.response.SubscriptionHistResponse.SingleChannelHist;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -202,55 +200,52 @@ public class WebUser extends BaseEntity {
     }
 
     public SubscriptionHistResponse histResponse() {
+        // 1. 날짜별로 SubscriptionActionHist를 그룹화
         Map<String, List<SubscriptionActionHist>> groupByActionDate = this.actionHists.stream()
                 .collect(Collectors.groupingBy(SubscriptionActionHist::getSubscriptionActionDate));
 
-        final List<ChannelHist> hists = new ArrayList<>();
+        // 2. 각 날짜에 대해 ChannelHist 리스트 생성
+        List<ChannelHist> hists = buildChannelHistList(groupByActionDate);
 
-        groupByActionDate.forEach((k, v) -> {
-
-            Map<Channel, List<SubscriptionActionHist>> groupByChannel = v.stream()
-                    .collect(Collectors.groupingBy(SubscriptionActionHist::getChannel));
-
-            List<SingleChannelHist> channelHists = new ArrayList<>();
-            // single Channel build
-            groupByChannel.forEach((inK, inV) -> {
-
-                List<SubscriptionAction> actions = inV.stream()
-                        .map(SubscriptionActionHist::buildDtoAction)
-                        .sorted(Comparator.comparing(SubscriptionAction::getActionDateTime).reversed())
-                        .toList();
-
-                channelHists.add(
-                        new SingleChannelHist(
-                                inK.getChannelName(),
-                                inK.getId(),
-                                actions
-                        ));
-            });
-
-            hists.add(new ChannelHist(k, channelHists));
-
-        });
+        // 3. 날짜순 내림차순 정렬
+        Collections.sort(hists);
 
         return new SubscriptionHistResponse(hists);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        WebUser webUser = (WebUser) o;
-        return Objects.equals(id, webUser.id) && Objects.equals(phoneNumber,
-                webUser.phoneNumber);
+    private List<ChannelHist> buildChannelHistList(Map<String, List<SubscriptionActionHist>> groupByActionDate) {
+        List<ChannelHist> hists = new ArrayList<>();
+
+        groupByActionDate.forEach((date, actions) -> {
+            List<SingleChannelHist> channelHists = buildSingleChannelHistList(actions);
+            hists.add(new ChannelHist(date, channelHists));
+        });
+
+        return hists;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, phoneNumber);
+    private List<SingleChannelHist> buildSingleChannelHistList(List<SubscriptionActionHist> actionHists) {
+        // 채널별로 SubscriptionActionHist를 그룹화
+        Map<Channel, List<SubscriptionActionHist>> groupByChannel = actionHists.stream()
+                .collect(Collectors.groupingBy(SubscriptionActionHist::getChannel));
+
+        List<SingleChannelHist> channelHists = new ArrayList<>();
+
+        groupByChannel.forEach((channel, actions) -> {
+            // 사건의 순서대로 내림차순 정렬된 actions 리스트 생성
+            List<SubscriptionAction> sortedActions = actions.stream()
+                    .map(SubscriptionActionHist::buildDtoAction)
+                    .sorted(Comparator.comparing(SubscriptionAction::getActionDateTime).reversed())
+                    .toList();
+
+            channelHists.add(new SingleChannelHist(
+                    channel.getChannelName(),
+                    channel.getId(),
+                    sortedActions
+            ));
+        });
+
+        return channelHists;
     }
+
 }

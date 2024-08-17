@@ -1,7 +1,12 @@
 package com.artinus.userapp.domain.entity.channel;
 
+import static javax.persistence.FetchType.LAZY;
+
 import com.artinus.userapp.constant.ChannelType;
 import com.artinus.userapp.domain.entity.base.BaseEntity;
+import com.artinus.userapp.domain.entity.subscription.SubscriptionActionHist;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +15,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -28,6 +34,9 @@ public class Channel extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ChannelType channelType;
 
+    @OneToMany(fetch = LAZY, mappedBy = "channel")
+    private List<SubscriptionActionHist> actionHists = new ArrayList<>();
+
     public Channel() {
 
     }
@@ -35,8 +44,6 @@ public class Channel extends BaseEntity {
     public Channel(String channelName, ChannelType channelType) {
         this(null, channelName, channelType);
     }
-
-
 
     public Channel(Long id, String channelName,
             ChannelType channelType) {
