@@ -104,10 +104,23 @@ class SubscriptionHandlerTest {
                     ArtinusException exception = assertThrows(ArtinusException.class, () -> {
                         webUser.subscribe(both, bothAndPremium, regularReq);
                     });
-
                     assertEquals(exception.getMessage(), NOT_UPPER_SUBSCRIBE_REQUEST.getMessage());
                 }
         );
+    }
+
+    @Test
+    @DisplayName("채널 타입 [구독, 해지] 타입에서 전체 구독이 가능한 케이스를 테스트 한다.")
+    void channelBothTest() {
+        assertDoesNotThrow(() -> webUser.subscribe(both, bothAndNot  , regularReq));
+        assertDoesNotThrow(() -> webUser.subscribe(both, bothAndRegular  , premiumReq));
+    }
+
+    @Test
+    @DisplayName("채널 타입 [구독, 해지] 타입에서 전체 구독이 가능한 케이스를 테스트 한다.")
+    void channelBothErrorTest() {
+        assertThrows(ArtinusException.class, () -> webUser.subscribe(both, bothAndNot  , notReq));
+        assertThrows(ArtinusException.class, () -> webUser.subscribe(both, bothAndPremium  , regularReq));
     }
 
     @Test
