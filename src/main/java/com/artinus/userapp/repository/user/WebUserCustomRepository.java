@@ -21,8 +21,7 @@ public class WebUserCustomRepository {
     public WebUser findByPhoneNumberHistFetched(String phoneNumber) {
         return jpaQueryFactory.selectFrom(webUser)
                 .leftJoin(webUser.actionHists, subscriptionActionHist).fetchJoin()
-                .join(subscriptionActionHist.channel, channel).fetchJoin()
                 .where(webUser.phoneNumber.eq(phoneNumber))
-                .fetchFirst();
+                .fetchOne();
     }
 }

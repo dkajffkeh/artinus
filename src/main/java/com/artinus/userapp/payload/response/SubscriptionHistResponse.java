@@ -16,6 +16,10 @@ public class SubscriptionHistResponse {
         this.hists = hists;
     }
 
+    public static SubscriptionHistResponse emptyOf() {
+        return new SubscriptionHistResponse(new ArrayList<>());
+    }
+
     public List<ChannelHist> getHists() {
         return hists;
     }

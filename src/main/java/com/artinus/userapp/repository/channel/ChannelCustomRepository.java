@@ -1,6 +1,7 @@
 package com.artinus.userapp.repository.channel;
 
 import static com.artinus.userapp.domain.entity.channel.QChannel.channel;
+import static com.artinus.userapp.domain.entity.subscription.QSubscriptionActionHist.subscriptionActionHist;
 
 import com.artinus.userapp.domain.entity.channel.Channel;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -15,10 +16,12 @@ public class ChannelCustomRepository {
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
-    public Channel findByIdHistFetched(Long id) {
+    public Channel findByIdAndDate(Long id, String date) {
         return jpaQueryFactory.selectFrom(channel)
-                .leftJoin(channel.actionHists).fetchJoin()
-                .where(channel.id.eq(id))
-                .fetchFirst();
+                .leftJoin(channel.actionHists, subscriptionActionHist).fetchJoin()
+                .leftJoin(subscriptionActionHist.webUser).fetchJoin()
+                .where(channel.id.eq(id),
+                        subscriptionActionHist.subscriptionActionDate.eq(date))
+                .fetchOne();
     }
 }

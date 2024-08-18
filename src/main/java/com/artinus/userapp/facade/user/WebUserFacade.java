@@ -40,11 +40,6 @@ public class WebUserFacade {
     }
 
     public WebUser findByPhoneNumberHistFetched(String phoneNumber) {
-        WebUser webUser = customRepository.findByPhoneNumberHistFetched(phoneNumber);
-        if(ObjectUtils.isEmpty(webUser)) {
-            log.warn("USER_NOT_FOUND occur request phone number : {}", phoneNumber);
-            throw new ArtinusException(USER_NOT_FOUND);
-        }
-        return webUser;
+        return customRepository.findByPhoneNumberHistFetched(phoneNumber);
     }
 }

@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,6 +38,7 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.util.ObjectUtils;
 
 @Entity
@@ -54,9 +56,11 @@ public class WebUser extends BaseEntity {
     private String phoneNumber;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "webUser", cascade = ALL)
+    @BatchSize(size = 100)
     private List<SubscriptionMst> subscriptions = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "webUser", cascade = ALL)
+    @BatchSize(size = 100)
     private List<SubscriptionActionHist> actionHists = new ArrayList<>();
 
     public List<SubscriptionMst> getSubscriptions() {
@@ -248,4 +252,28 @@ public class WebUser extends BaseEntity {
         return channelHists;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        WebUser webUser = (WebUser) o;
+        return Objects.equals(id, webUser.id) && phoneNumber.equals(webUser.phoneNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, phoneNumber);
+    }
 }

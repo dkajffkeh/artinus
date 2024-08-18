@@ -12,9 +12,11 @@ import com.artinus.userapp.domain.entity.user.WebUser;
 import com.artinus.userapp.facade.channel.ChannelFacade;
 import com.artinus.userapp.facade.subscription.SubscriptionMstFacade;
 import com.artinus.userapp.facade.user.WebUserFacade;
+import com.artinus.userapp.payload.request.SubscribeRequest;
 import javax.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Service
 public class DataInit {

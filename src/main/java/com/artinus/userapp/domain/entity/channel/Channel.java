@@ -5,9 +5,18 @@ import static javax.persistence.FetchType.LAZY;
 import com.artinus.userapp.constant.ChannelType;
 import com.artinus.userapp.domain.entity.base.BaseEntity;
 import com.artinus.userapp.domain.entity.subscription.SubscriptionActionHist;
+import com.artinus.userapp.domain.entity.user.WebUser;
+import com.artinus.userapp.payload.response.ChannelHistResponse;
+import com.artinus.userapp.payload.response.ChannelHistResponse.ChannelHistPayload;
+import com.artinus.userapp.payload.response.SubscriptionAction;
+import com.artinus.userapp.payload.response.SubscriptionHistResponse.SingleChannelHist;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -17,6 +26,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "CHANNEL")
@@ -70,6 +80,27 @@ public class Channel extends BaseEntity {
 
     public boolean isSubscribeOnly() {
         return this.channelType == ChannelType.SUBSCRIPTION_ONLY;
+    }
+
+    public ChannelHistResponse toChannelHistResponse(String date) {
+        Map<WebUser, List<SubscriptionActionHist>> groupByWebUser = actionHists.stream()
+                .collect(Collectors.groupingBy(SubscriptionActionHist::getWebUser));
+
+        List<ChannelHistPayload> hists = new ArrayList<>();
+
+        groupByWebUser.forEach((webUser, actionHists) -> {
+            List<SubscriptionAction> sortedActions = actionHists.stream()
+                    .map(SubscriptionActionHist::buildDtoAction)
+                    .sorted(Comparator.comparing(SubscriptionAction::getActionDateTime).reversed())
+                    .toList();
+
+            hists.add(new ChannelHistPayload(
+                    webUser.getId(),
+                    webUser.getPhoneNumber(),
+                    sortedActions));
+        });
+
+        return new ChannelHistResponse(date, id, hists);
     }
 
     @Override

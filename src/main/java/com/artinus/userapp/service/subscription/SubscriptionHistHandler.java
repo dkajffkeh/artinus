@@ -3,10 +3,9 @@ package com.artinus.userapp.service.subscription;
 import com.artinus.userapp.domain.entity.user.WebUser;
 import com.artinus.userapp.facade.user.WebUserFacade;
 import com.artinus.userapp.payload.response.SubscriptionHistResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 @Service
 public class SubscriptionHistHandler {
@@ -19,7 +18,9 @@ public class SubscriptionHistHandler {
 
     @Transactional(readOnly = true)
     public SubscriptionHistResponse getSubscriptionHists(String phoneNumber) {
-        return webUserFacade.findByPhoneNumberHistFetched(phoneNumber).histResponse();
+        WebUser webUser = webUserFacade.findByPhoneNumberHistFetched(phoneNumber);
+        if(ObjectUtils.isEmpty(webUser)) return SubscriptionHistResponse.emptyOf();
+        return webUser.histResponse();
     }
 
 }

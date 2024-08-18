@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "SUBSCRIPTION_ACTION_HIST")
@@ -51,8 +52,6 @@ public class SubscriptionActionHist extends BaseEntity {
     @Column(name = "SUBSCRIPTION_ACTION_DATE")
     private String subscriptionActionDate;
 
-
-
     public SubscriptionActionHist() {
 
     }
@@ -80,6 +79,10 @@ public class SubscriptionActionHist extends BaseEntity {
 
     public Channel getChannel() {
         return channel;
+    }
+
+    public WebUser getWebUser() {
+        return webUser;
     }
 
     public String getSubscriptionActionDate() {
