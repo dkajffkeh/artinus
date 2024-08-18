@@ -15,6 +15,10 @@ public enum ArtinusErrorCode {
 
     NOT_UPPER_SUBSCRIBE_REQUEST(HttpStatus.BAD_REQUEST, "구독은 현재보다 상위 요청만 가능합니다."),
 
+    ALREADY_SUBSCRIBED(HttpStatus.BAD_REQUEST, "이미 구독처리가 완료되었습니다."),
+
+    ALREADY_PROCEEDED(HttpStatus.BAD_REQUEST, "이미 처리가 완료된 요청입니다."),
+
     UPPER_SUBSCRIBE_REQUEST(HttpStatus.BAD_REQUEST, "구독 취소는 현재 구독 단계보다 낮아야합니다.");
 
 
